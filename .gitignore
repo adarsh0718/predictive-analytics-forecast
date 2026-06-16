@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+venv/
+.env
+.DS_Store
+data/uploaded_dataset.csv
+data/active_dataset_path.txt
+data/forecast_export.csv

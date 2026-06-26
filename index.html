@@ -232,11 +232,10 @@
         </div>
     </div>
 
-    <!-- CDN Libraries: ApexCharts & Pyodide -->
+    <!-- CDN Libraries: ApexCharts only (no Pyodide — pure JS engine used) -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
 
-    <!-- Pyodide Interceptor Handler -->
+    <!-- Pure JS Forecasting Engine (instant, no WebAssembly download) -->
     <script src="static/js/pyodide-handler.js"></script>
 
     <!-- App Entry Points -->

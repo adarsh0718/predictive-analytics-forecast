@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictive Analytics &amp; Forecasting Dashboard</title>
+    
+    <!-- Custom Style Sheet (Glassmorphism & Layouts) -->
+    <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Dashboard Header -->
+        <header class="animate-fade-in" style="animation-delay: 0.1s">
+            <div class="brand-section">
+                <span class="brand-logo">📈</span>
+                <h1 class="brand-title">Predictive Analytics &amp; Forecasting</h1>
+            </div>
+            
+            <div class="header-controls">
+                <!-- Active Dataset Status Indicator -->
+                <div class="dataset-indicator" id="active-dataset-pill" style="display: none;">
+                    <span class="indicator-dot"></span>
+                    <span id="active-dataset-name">historical_sales.csv</span>
+                    <button id="btn-reset-dataset" title="Reset to default dataset">&times;</button>
+                </div>
+                
+                <!-- Drag and Drop Import Container -->
+                <div class="upload-zone" id="drop-zone">
+                    <span class="upload-icon">📥</span>
+                    <div class="upload-text">
+                        Drag &amp; drop CSV or <span>browse</span>
+                    </div>
+                    <input type="file" id="file-input" accept=".csv, .xlsx, .xls">
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Split Layout -->
+        <div class="dashboard-layout">
+            <!-- Left Panel: Parameter Controls -->
+            <aside class="glass-card control-panel animate-fade-in" style="animation-delay: 0.2s">
+                <h2 class="panel-title">Model Settings</h2>
+                
+                <form id="forecast-controls-form" onsubmit="return false;">
+                    <!-- Model Selector -->
+                    <div class="control-group">
+                        <label class="control-label" for="model-type">Predictive Model</label>
+                        <select class="control-select" id="model-type">
+                            <option value="linear">Linear Regression (Trend + Calendar)</option>
+                            <option value="polynomial">Polynomial Regression (Quadratic Fit)</option>
+                            <option value="random_forest">Random Forest Regressor (Tree Ensemble)</option>
+                        </select>
+                    </div>
+
+                    <!-- Forecast Horizon Slider -->
+                    <div class="control-group">
+                        <div class="slider-header">
+                            <label class="control-label" for="horizon">Forecast Horizon</label>
+                            <span class="slider-value" id="horizon-val">30 Days</span>
+                        </div>
+                        <input type="range" class="control-slider" id="horizon" min="7" max="120" value="30">
+                        <span class="slider-subtext">How many periods into the future to predict.</span>
+                    </div>
+
+                    <!-- Data Granularity Selector -->
+                    <div class="control-group">
+                        <label class="control-label">Data Aggregation</label>
+                        <div class="radio-toggle-group">
+                            <input type="radio" id="gran-daily" name="granularity" value="D" checked>
+                            <label for="gran-daily">Daily</label>
+                            
+                            <input type="radio" id="gran-weekly" name="granularity" value="W">
+                            <label for="gran-weekly">Weekly</label>
+                            
+                            <input type="radio" id="gran-monthly" name="granularity" value="M">
+                            <label for="gran-monthly">Monthly</label>
+                        </div>
+                    </div>
+
+                    <!-- Train/Test Split Slider -->
+                    <div class="control-group">
+                        <div class="slider-header">
+                            <label class="control-label" for="split-ratio">Train/Test Split</label>
+                            <span class="slider-value" id="split-val">80%</span>
+                        </div>
+                        <input type="range" class="control-slider" id="split-ratio" min="50" max="90" step="5" value="80">
+                        <span class="slider-subtext">Percentage of history used for training the model.</span>
+                    </div>
+
+                    <button class="submit-btn" id="btn-run-forecast">
+                        ⚡ Generate Forecast Projections
+                    </button>
+                    
+                    <button class="export-btn" id="btn-export-predictions">
+                        📥 Export Forecast CSV
+                    </button>
+                </form>
+            </aside>
+
+            <!-- Right Panel: KPI Cards and Graphs -->
+            <main class="dashboard-main">
+                <!-- KPI metrics cards -->
+                <section class="kpi-container">
+                    <!-- KPI 1: R-squared -->
+                    <div class="glass-card kpi-card kpi-r2 animate-fade-in" style="animation-delay: 0.3s">
+                        <div class="kpi-header">
+                            <span class="kpi-label">R-Squared (R²) Score</span>
+                            <span class="kpi-icon">🎯</span>
+                        </div>
+                        <div class="kpi-body">
+                            <span class="kpi-value" id="kpi-val-r2">0.0000</span>
+                        </div>
+                        <div class="kpi-footer">Model fit quality (Target: >0.7)</div>
+                    </div>
+
+                    <!-- KPI 2: MAE -->
+                    <div class="glass-card kpi-card kpi-mae animate-fade-in" style="animation-delay: 0.4s">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Mean Absolute Error (MAE)</span>
+                            <span class="kpi-icon">📉</span>
+                        </div>
+                        <div class="kpi-body">
+                            <span class="kpi-value" id="kpi-val-mae">₹0</span>
+                        </div>
+                        <div class="kpi-footer">Average deviation in units</div>
+                    </div>
+
+                    <!-- KPI 3: RMSE -->
+                    <div class="glass-card kpi-card kpi-rmse animate-fade-in" style="animation-delay: 0.5s">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Root Mean Squared Error</span>
+                            <span class="kpi-icon">📐</span>
+                        </div>
+                        <div class="kpi-body">
+                            <span class="kpi-value" id="kpi-val-rmse">₹0</span>
+                        </div>
+                        <div class="kpi-footer">Penalizes larger outliers</div>
+                    </div>
+
+                    <!-- KPI 4: MAPE -->
+                    <div class="glass-card kpi-card kpi-mape animate-fade-in" style="animation-delay: 0.6s">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Mean Abs Percentage Error</span>
+                            <span class="kpi-icon">🧮</span>
+                        </div>
+                        <div class="kpi-body">
+                            <span class="kpi-value" id="kpi-val-mape">0%</span>
+                        </div>
+                        <div class="kpi-footer">Percentage forecasting error</div>
+                    </div>
+                </section>
+
+                <!-- Primary Forecast Chart -->
+                <section class="glass-card chart-card animate-fade-in" style="animation-delay: 0.7s">
+                    <div class="chart-title">
+                        <span>Trend Projections &amp; ML Forecast Range</span>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="legend-color history"></span> Actuals</span>
+                            <span class="legend-item"><span class="legend-color validation"></span> Validation</span>
+                            <span class="legend-item"><span class="legend-color forecast"></span> Forecast</span>
+                        </div>
+                    </div>
+                    <div class="chart-container" id="chart-main-forecast"></div>
+                </section>
+
+                <!-- Bottom Diagnostic Charts Grid -->
+                <section class="charts-grid">
+                    <!-- Feature Importances -->
+                    <div class="glass-card chart-card chart-card-span-6 animate-fade-in" style="animation-delay: 0.8s">
+                        <div class="chart-title">
+                            <span>Feature Impact / Coefficient Weight</span>
+                        </div>
+                        <div class="chart-container" id="chart-feature-importance"></div>
+                    </div>
+
+                    <!-- Residuals Histogram -->
+                    <div class="glass-card chart-card chart-card-span-6 animate-fade-in" style="animation-delay: 0.9s">
+                        <div class="chart-title">
+                            <span>Residual Errors Distribution (Training Set)</span>
+                        </div>
+                        <div class="chart-container" id="chart-residuals-dist"></div>
+                    </div>
+                </section>
+
+                <!-- Historical Data Table Section -->
+                <section class="glass-card table-card animate-fade-in" style="animation-delay: 1.0s">
+                    <div class="table-header-wrapper">
+                        <h3>Dataset Records View</h3>
+                        <div class="search-container table-search">
+                            <span>🔍</span>
+                            <input type="text" id="table-search-input" class="search-input" placeholder="Quick search date/value...">
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="records-table">
+                            <thead>
+                                <tr>
+                                    <th data-column="date">Date</th>
+                                    <th data-column="actual" style="text-align: right;">Sales Revenue Value</th>
+                                    <th data-column="marketing" style="text-align: right;">Marketing Spend</th>
+                                    <th data-column="traffic" style="text-align: right;">Store Traffic</th>
+                                    <th data-column="discount" style="text-align: right;">Discount %</th>
+                                    <th data-column="holiday" style="text-align: right;">Holiday?</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination controls -->
+                    <div class="table-pagination">
+                        <span id="table-info">Showing 0 of 0 entries</span>
+                        <div class="pagination-controls">
+                            <button class="pagination-btn" id="btn-prev-page" disabled>Previous</button>
+                            <button class="pagination-btn" id="btn-next-page" disabled>Next</button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Spinner loading screen -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <p class="loading-text">⚡ Running predictive models &amp; generating confidence ranges...</p>
+        </div>
+    </div>
+
+    <!-- CDN Libraries: ApexCharts & Pyodide -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+
+    <!-- Pyodide Interceptor Handler -->
+    <script src="static/js/pyodide-handler.js"></script>
+
+    <!-- App Entry Points -->
+    <script type="module" src="static/js/app.js"></script>
+</body>
+</html>

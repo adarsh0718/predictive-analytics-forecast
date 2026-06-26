@@ -12,7 +12,7 @@
 **An interactive machine learning application that forecasts future business trends (e.g. sales, website traffic) using historical time-series data.**  
 Includes a premium glassmorphic dark-theme dashboard.
 
-[📂 View Source](https://github.com/adarsh0718/predictive-analytics-forecast)  
+[📂 View Source](https://github.com/adarsh0718/predictive-analytics-forecast) &nbsp;&nbsp;•&nbsp;&nbsp; [⚡ Live Demo Link](https://adarsh0718.github.io/predictive-analytics-forecast/)  
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/adarsh0718/predictive-analytics-forecast)
 
 </div>

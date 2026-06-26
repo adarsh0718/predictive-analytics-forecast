@@ -12,7 +12,8 @@
 **An interactive machine learning application that forecasts future business trends (e.g. sales, website traffic) using historical time-series data.**  
 Includes a premium glassmorphic dark-theme dashboard.
 
-[📂 View Source](https://github.com/adarsh0718/predictive-analytics-forecast)
+[📂 View Source](https://github.com/adarsh0718/predictive-analytics-forecast)  
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/adarsh0718/predictive-analytics-forecast)
 
 </div>
 
@@ -105,6 +106,19 @@ python data/generate_data.py
 python app.py
 ```
 Open **[http://localhost:5001](http://localhost:5001)** in your browser!
+
+---
+
+## 🚀 Deployment (Live Demo)
+
+This application can be deployed instantly to **Render** for a free live demo:
+
+1. Click the **Deploy to Render** button at the top of this README.
+2. Connect your GitHub account and authorize Render.
+3. Click **Apply** or **Deploy** on the Blueprint configuration page.
+4. Render will automatically build the application and host it on a public URL.
+
+*Note: The free tier of Render spins down after 15 minutes of inactivity. When someone visits the live demo, it may take around 50 seconds to spin up.*
 
 ---
 
